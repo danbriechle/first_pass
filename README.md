@@ -1,4 +1,5 @@
 # first_pass
+## note this is still in it's infancy
 
 An LLM-powered **first-pass PR review** you can drop into any repo that leverages an organization’s coding standards 
 and internal documentation to perform an initial review before senior engineers are involved. It is designed to help
