@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+require "optparse"
+require_relative "../lib/first_pass"
+
+options = {
+  cfg: ENV["FIRST_PASS_CONFIG"] || "config/first_pass.yml",
+  base: ENV["FIRST_PASS_BASE"] || ENV["GITHUB_BASE_SHA"],
+  head: ENV["FIRST_PASS_HEAD"] || ENV["GITHUB_SHA"],
+  pr_title: ENV["PR_TITLE"] || "",
+  pr_body: ENV["PR_BODY"] || "",
+  repo: ENV["GITHUB_REPOSITORY"],
+  pr_number: ENV["PR_NUMBER"]&.to_i
+}
+
+OptionParser.new do |o|
+  o.banner = "Usage: first-pass [options]"
+  o.on("--config PATH", "Path to config YAML") { |v| options[:cfg] = v }
+  o.on("--base SHA", "Base SHA")               { |v| options[:base] = v }
+  o.on("--head SHA", "Head SHA")               { |v| options[:head] = v }
+  o.on("--pr-title STR", "PR title")           { |v| options[:pr_title] = v }
+  o.on("--pr-body STR", "PR body")             { |v| options[:pr_body]  = v }
+  o.on("--repo OWNER/REPO", "GitHub repo")     { |v| options[:repo] = v }
+  o.on("--pr-number N", Integer, "PR number")  { |v| options[:pr_number] = v }
+end.parse!
+
+runner = FirstPass::ReviewRunner.new(
+  cfg_path: options[:cfg],
+  base_sha: options[:base],
+  head_sha: options[:head],
+  pr_title: options[:pr_title],
+  pr_body:  options[:pr_body],
+  repo: options[:repo],
+  pr_number: options[:pr_number]
+)
+runner.run

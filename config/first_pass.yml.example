@@ -1,0 +1,23 @@
+provider: openai
+provider_env:
+  api_key_var: OPENAI_API_KEY
+  model: gpt-4o-mini
+  api_url: https://api.openai.com/v1/chat/completions
+
+max_diff_bytes: 300000
+
+canon:
+  coding_standards: docs/engineering/coding-standards.md
+  security:         docs/engineering/security.md
+  documentation:    docs/engineering/documentation.md
+  goals:            docs/engineering/goals.md
+
+output:
+  review_json: tmp/first_pass/review.json
+  sarif:       tmp/first_pass/review.sarif
+
+policy:
+  fail_on_high: true
+
+comment:
+  post_to_github: true

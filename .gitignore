@@ -1,0 +1,8 @@
+/.bundle
+/vendor
+/tmp
+/.DS_Store
+/.idea
+/.vscode
+coverage
+*.gem

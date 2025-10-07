@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "overall_summary",
+    "findings",
+    "checklist"
+  ],
+  "properties": {
+    "overall_summary": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "severity",
+          "file",
+          "title",
+          "recommendation"
+        ],
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "rule_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "checklist": {
+      "type": "object",
+      "required": [
+        "tests_added_or_reason",
+        "docs_updated_or_not_needed",
+        "adheres_to_standards",
+        "aligns_with_goals"
+      ],
+      "properties": {
+        "tests_added_or_reason": {
+          "type": "boolean"
+        },
+        "docs_updated_or_not_needed": {
+          "type": "boolean"
+        },
+        "adheres_to_standards": {
+          "type": "boolean"
+        },
+        "aligns_with_goals": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

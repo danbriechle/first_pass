@@ -1,0 +1,49 @@
+name: LLM PR Review (first_pass)
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Install gem (local)
+        run: bundle install --path vendor/bundle
+
+      - name: Extract SHAs
+        id: shas
+        run: |
+          echo "base_sha=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+          echo "head_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Run first_pass
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY:  ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ steps.shas.outputs.head_sha }}
+          GITHUB_BASE_SHA: ${{ steps.shas.outputs.base_sha }}
+        run: |
+          bin/first-pass --config config/first_pass.yml             --base $GITHUB_BASE_SHA --head $GITHUB_SHA             --pr-title "$PR_TITLE" --pr-body "$PR_BODY"             --repo "$GITHUB_REPOSITORY" --pr-number "$PR_NUMBER"
+
+      - name: Upload SARIF (optional)
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: tmp/first_pass/review.sarif
